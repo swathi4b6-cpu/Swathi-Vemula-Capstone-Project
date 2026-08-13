@@ -1,0 +1,75 @@
+## Execution Instructions
+
+### 1. Provision Virtual Environments and Requirements
+Ensure your sandbox contains necessary tools before starting execution:
+```bash
+pip install requests beautifulsoup4 pandas numpy
+```
+
+### 2. Run the Data Engine Ingestion Engine
+To extract structural arrays, run cleaning, and instantiate the SQLite store:
+```bash
+python pipeline.py
+```
+
+### 3. Validate and Profile Output Tables
+To verify system outputs across database layers versus memory frame components side by side:
+```bash
+python query.py
+```
+source .venv/bin/activate
+cd data_pipeline
+python pipeline.py
+python query.py
+------
+[*] Initializing extraction from https://toscrape.com...
+[+] Extraction complete. Extracted 100 records across 5 pages.
+[*] Initiating data transformations and currency enrichments...
+[*] Instantiating normalized relational DB engine at catalog_benchmark.db...
+[+] Database loaded and normalized successfully.
+
+=== QUERY 1: DISTINCT Ratings in Catalog (Demonstrates DISTINCT) ===
+ rating
+      1
+      2
+      3
+      4
+      5
+
+=== QUERY 2: High Value Mid-Tier Products (Demonstrates WHERE, BETWEEN, ORDER BY) ===
+                     title  price_gbp  rating
+The Black Maria (Poetry Volume 1)      52.15       3
+Mesa Verde (Travel Guide Vol 4)         37.46       3
+Worlds Elsewhere: Journeys...           24.01       3
+
+=== QUERY 3: Out-of-Stock Benchmarks (Demonstrates WHERE, LIMIT) ===
+                      title  price_inr
+Borderline (The Misadventures)    5115.19
+Starwing (The Chronicles Vol 2)   6111.45
+
+=== QUERY 4: Premium Inventory Valuation (Demonstrates ORDER BY, LIMIT) ===
+                  title  price_inr
+Thomas Jefferson and...    6225.56
+Soumission (French Ed)     5321.10
+The Requiem Shark          5199.11
+
+=== QUERY 5: Unified Relational View (Demonstrates JOIN, SELECT, LIMIT) ===
+                  title  price_inr  rating         category_name
+Thomas Jefferson and...    6225.56       5  All Products Catalog
+The Requiem Shark          5199.11       5  All Products Catalog
+
+=== VERIFYING EQUIVALENCE: RELATIONAL SQL JOIN VS PANDAS IN-MEMORY MERGE ===
+
+[!] Displaying DataFrames Side-by-Side for Structural Compliance Verification:
+
+--- ENGINE A: SQL Server-Side Query Execution Output ---
+                     title  price_inr  rating         category_name
+0  Thomas Jefferson and...    6225.56       5  All Products Catalog
+1        The Requiem Shark    5199.11       5  All Products Catalog
+
+--- ENGINE B: Client-Side Pandas Memory-Merge Output ---
+                     title  price_inr  rating         category_name
+0  Thomas Jefferson and...    6225.56       5  All Products Catalog
+1        The Requiem Shark    5199.11       5  All Products Catalog
+
+[+] Verification Check: PASS. Both architectures yield identical data structures.
