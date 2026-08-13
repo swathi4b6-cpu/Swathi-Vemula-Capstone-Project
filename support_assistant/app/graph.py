@@ -105,7 +105,7 @@ def retrieve_and_answer(state: AgentState) -> dict:
     
     if settings.MOCK_LLM == 1:
         # Graded Baseline output generation logic
-        canned_text = f"Based on the retrieved context: {top_chunk['text'][:200]}"
+        canned_text = f"Based on the retrieved context: {top_chunk['text'][:1000]}"
         sources_list = [c['id'] for c in matched_chunks]
         
         final_response = ZeptoAgentResponse(
@@ -119,7 +119,7 @@ def retrieve_and_answer(state: AgentState) -> dict:
         formatted_prompt = STRUCTURED_RAG_PROMPT_TEMPLATE.format(context_block=context_str, query_text=query)
         
         fallback_str = json.dumps({
-            "answer": f"Fallback mitigation generated: {top_chunk['text'][:150]}",
+            "answer": f"Fallback mitigation generated: {top_chunk['text'][:1000]}",
             "sources": [top_chunk['id']],
             "confidence": 0.50
         })
